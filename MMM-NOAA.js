@@ -321,9 +321,9 @@ Module.register("MMM-NOAA", {
 	        }
 	} else {
         	if (current.pressure_trend != 0) {
-	            td3.innerHTML = current.pressure_mb + " " + current.pressure_trend;
+	            td3.innerHTML = current.pressure_mb + " " + current.pressure_trend + " hPa";
 	        } else {
-	            td3.innerHTML = current.pressure_mb + " hPa";
+	            td3.innerHTML = current.pressure_mb + " ~ hPa";
         	}
 	}
         TDrow.appendChild(td3);
