@@ -48,7 +48,13 @@ Will default to EN if NO translation file is found.  Weather alerts will be in t
 
 		apiKey: "YOUR API KEY",    // https://www.wunderground.com/weather/api  select the middle plan... 	 
 		airKey: "YOUR API KEY",    // IF you want Air Quality Index
-		pws: "KNYELMIR13",         // go here to find your pws: https://www.wunderground.com/wundermap		 
+		pws: "KNYELMIR13",         // go here to find your pws: https://www.wunderground.com/wundermap
+		pws1: "IBAYERNE30",
+		pws2: "KNYELMIR13",
+		pws3: "IHERAKLI5",  
+		loco1: "Erdweg/De",
+		loco2: "New York/Us",
+		loco3: "Kos/Gr"
 	}
     },
 
