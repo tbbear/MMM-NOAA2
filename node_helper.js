@@ -1,6 +1,6 @@
 /* Magic Mirror
-    * Module: MMM-NOAA  
-    *  Alert function for foreign weather written by ttbear
+    * Module: MMM-NOAA
+    *
     * By Cowboysdude
     * 
     */
@@ -62,69 +62,42 @@ module.exports = NodeHelper.create({
             }
        });
    },
- 
+   
    getAlerts: function() {
-    if (this.config.lang == "en") {
-        var self = this;
-        request({
-            url: "http://api.wunderground.com/api/" + this.config.apiKey + "/alerts/q/pws:" + this.config.pws + ".json",
-            method: 'GET'
-        }, (error, response, body) => {
-            if (!error && response.statusCode === 200) {
-                var alerts = JSON.parse(body).alerts;
-                if (alerts != null || undefined) {
-                    self.sendSocketNotification("ALERT_RESULTS", alerts);
-                }
-            }
-        });
-    } else {
-        var self = this;
-        request({
-            url: "http://api.wunderground.com/api/" + this.config.apiKey + "/alerts/q/pws:" + this.config.pws + ".json",
-            method: 'GET'
-        }, (error, response, body) => {
-            if (!error && response.statusCode === 200) {
-                var alert = JSON.parse(body).alerts;
-                for (var i = 0; i < alert.length; i++) {
-                    var alerts = alert[i];
-                    if (alerts != undefined) {
-                        console.log("Alert(" + i + ") found ....");
-                        if (this.config.lang != 'en') {
-                            console.log("in Translate");
-                            Promise.all([
-                                translate(alerts.description, {
-                                    from: 'en',
-                                    to: this.config.lang
-                                })
-                            ]).then(function(results) {
-                                var desc = results[0].text;
-                                var level = alerts.level_meteoalarm;
-                                self.sendSocketNotification("ALERT_RESULTS", {
-                                    desc,
-                                    level
-                                });
-                            })
-                        } else {
-                            var desc = alerts.description;
-                            var level = alerts.level_meteoalarm;
-                            self.sendSocketNotification("ALERT_RESULTS", {
-                                desc,
-                                level
-                            });
-                        }
+	var self = this;
+	request({
+		url: "http://api.wunderground.com/api/" + this.config.apiKey + "/alerts/q/pws:" + this.config.pws + ".json",
+		method: 'GET'
+		}, (error, response, body) => {
+			if (!error && response.statusCode === 200) {
+				var alert = JSON.parse(body).alerts;
+				for(var i = 0; i < alert.length; i++) {
+					var alerts = alert[i];
+					if (alerts != undefined) { 
+						console.log("Alert(" + i + ") found ....");
+						if (this.config.lang != 'en') {
+							console.log("in Translate");
+							Promise.all([
+								translate(alerts.description, {from: 'en', to: this.config.lang})
+							]).then(function(results) {
+								var desc = results[0].text;
+								var level = alerts.level_meteoalarm;
+ 					    	        	self.sendSocketNotification("ALERT_RESULTS", {desc, level});
+		              				})
+                	   			}else{
+		                  			var desc = alerts.description;
+                		  			var level = alerts.level_meteoalarm;
+							self.sendSocketNotification("ALERT_RESULTS", {desc, level});
+						}
 
-                    } else {
-                        self.sendSocketNotification("ALERT_RESULTS", {
-                            desc,
-                            level
-                        });
-                    }
-                }
-            }
-        });
-    }
-},
-		
+					}else{
+						self.sendSocketNotification("ALERT_RESULTS", {desc, level});
+					}
+				}
+			}     	
+	});
+   },
+
     //Subclass socketNotificationReceived received.
     socketNotificationReceived: function(notification, payload) {
     	if(notification === 'CONFIG'){

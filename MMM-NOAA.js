@@ -3,9 +3,10 @@
  * By cowboysdude and snille 
         modified by barnosch
  */
- 
-var c = 0; 
- 
+var c = 0;
+var l = 1;
+var loco = "";
+
 Module.register("MMM-NOAA", {
 
     // Module config defaults.
@@ -15,9 +16,14 @@ Module.register("MMM-NOAA", {
         initialLoadDelay: 8000,
         maxWidth: "100%",
         apiKey: "",
-        pws: "KNYELMIR13",
         airKey: "",
-        ampm: true,
+	loco1: "Erdweg",
+	loco2: "New York",
+	loco3: "brrrrrrr",
+	pws: "XXX",
+	pws1: "KNYELMIR13",
+	pws2: "KNYELMIR13",
+	pws3: "KNYELMIR13",
 
         langFile: {
             "en": "en-US",
@@ -31,6 +37,7 @@ Module.register("MMM-NOAA", {
             "nb": "nb-NO"
         },
 
+
         langTrans: {
             "en": "EN",
             "de": "DL",
@@ -41,7 +48,15 @@ Module.register("MMM-NOAA", {
             "da": "DK",
             "nl": "NL",
             "nb": "NO",
-        }
+        },
+
+	levelTrans: {
+        	"1":"green",
+		"2":"yellow",
+		"3":"orange",
+		"4":"red",
+	}				
+
     },
 
     getTranslations: function() {
@@ -66,6 +81,7 @@ Module.register("MMM-NOAA", {
         url = "http://api.wunderground.com/api/" + this.config.apiKey + "/forecast/lang:" + lang + "/conditions/q/pws:" + this.config.pws + ".json";
 
         return url;
+
     },
 
 
@@ -85,11 +101,15 @@ Module.register("MMM-NOAA", {
 
         // Set locale.  
         var lang = this.config.langTrans[config.language];
+	l = 1;
+	loco = this.config.loco1;
+	this.config.pws = this.config.pws1;
         this.url = this.getUrl();
         this.forecast = {};
         this.air = {};
         this.srss = {};
         this.alert = [];
+	this.amess = [];
         this.map = [];
         this.city = {};
         this.clphase = {};
@@ -98,7 +118,9 @@ Module.register("MMM-NOAA", {
         this.scheduleUpdate();
     },
 
+
     processNoaa: function(data) {
+	c = 0;
         this.current = data.current_observation;
         this.forecast = data.forecast.simpleforecast.forecastday;
         this.city = this.current.display_location.city;
@@ -112,15 +134,10 @@ Module.register("MMM-NOAA", {
         this.air = data.data.current.pollution;
     },
 
-    
     processAlert: function(data) {
-    if (this.config.lang == "en"){	
-    this.alert = data;
-	}else {
 	this.alert = data;
 	this.amess[c] = this.alert;
 	c = c + 1;
-	}
     },
 
     processMoon: function(data) {
@@ -215,9 +232,42 @@ Module.register("MMM-NOAA", {
         }
     },
 
+    doact: function() {
+		l = l + 1;
+		if (l == 4) {l = 1};
+		var lang = this.config.langTrans[config.language];
+
+		switch (l) {
+		case 1:
+			loco = this.config.loco1;
+			this.config.pws = this.config.pws1;
+			break;
+		case 2:
+			loco = this.config.loco2;
+			this.config.pws = this.config.pws2;
+			break;
+		case 3:
+			loco = this.config.loco3;
+			this.config.pws = this.config.pws3;
+			break;
+		}
+		this.url = "http://api.wunderground.com/api/" + this.config.apiKey + "/forecast/lang:" + lang + "/conditions/q/pws:" + this.config.pws + ".json";
+		this.getNOAA();
+		this.updateDom(300);	
+	},
+
     getDom: function() {
 
+
         var wrapper = document.createElement("div");
+
+	var loc = document.createElement("div");
+	loc.innerHTML = loco;
+	loc.style.cursor = "pointer";
+	loc.className = "button";
+	loc.addEventListener("click", () => this.doact());
+	wrapper.appendChild(loc);
+
 
         var current = this.current;
 
@@ -227,7 +277,7 @@ Module.register("MMM-NOAA", {
         var curCon = document.createElement("div");
         curCon.classList.add("small", "bright", "img");
         curCon.setAttribute('style', 'line-height: 105%;');
-        if (n < 17 && n > 6) {
+        if (n < 18 && n > 6) {
             curCon.innerHTML = current.weather + "<img class = 'icon2' src='modules/MMM-NOAA/images/" + current.icon + ".png'>";
         } else {
             curCon.innerHTML = current.weather + "<img class = 'icon2' src='modules/MMM-NOAA/images/nt_" + current.icon + ".png'>";
@@ -238,22 +288,30 @@ Module.register("MMM-NOAA", {
         cur.classList.add("large", "bright");
         cur.setAttribute('style', 'line-height: 5%;');
         cur.setAttribute("style", "padding-bottom:15px;");
-        if (this.config.units == "imperial"){
-		 cur.innerHTML = Math.round(current.temp_f) + "&deg;";	
-		}else{
-		cur.innerHTML = Math.round(current.temp_c) + "&deg;";	
+	if (this.config.units != "metric") {
+		if (current.temp_f > 80) {
+			cur.innerHTML = "<font color=#7dfafd>" + Math.round(current.temp_f) + "&deg;";
+		} else {
+			ccur.innerHTML = Math.round(current.temp_f) + "&deg;";
 		}
+	} else {
+		if (current.temp_c > 26) {
+			cur.innerHTML = "<font color=#7dfafd>" + Math.round(current.temp_c) + "&deg;";
+		} else {
+			cur.innerHTML = Math.round(current.temp_c) + "&deg;";
+		}
+	}
         wrapper.appendChild(cur);
 
         var top = document.createElement("div");
 
         var weatherTable = document.createElement("table");
         weatherTable.classList.add("table");
-
+ 
         var hRow = document.createElement("tr");
         var hsecond = document.createElement("th");
         hsecond.setAttribute("colspan", 4);
-        hsecond.setAttribute("sytle", "text-align:center");
+        hsecond.setAttribute("style", "text-align:center");
         hsecond.classList.add("rheading");
         hsecond.innerHTML = this.translate("Atmospheric Conditions");
         hRow.appendChild(hsecond);
@@ -295,28 +353,24 @@ Module.register("MMM-NOAA", {
         weatherTable.appendChild(TDrow);
 
         var td3 = document.createElement("td");
-        if (this.config.units == "imperial"){
-			if (current.pressure_trend != 0) {
-            td3.innerHTML = current.pressure_in + " " + current.pressure_trend;
-        } else {
-            td3.innerHTML = current.pressure_in + " S";
-        }
-		} else {
-		if (current.pressure_trend != 0) {
-            td3.innerHTML = current.pressure_mb + " " + current.pressure_trend;
-        } else {
-            td3.innerHTML = current.pressure_mb + " S";
-        }	
-		}
+	if (this.config.units != "metric") {
+	        if (current.pressure_trend != 0) {
+        	    td3.innerHTML = current.pressure_in + " " + current.pressure_trend;
+	        } else {
+        	    td3.innerHTML = current.pressure_in + " S";
+	        }
+	} else {
+        	if (current.pressure_trend != 0) {
+	            td3.innerHTML = current.pressure_mb + " " + current.pressure_trend + " hPa";
+	        } else {
+	            td3.innerHTML = current.pressure_mb + " ~ hPa";
+        	}
+	}
         TDrow.appendChild(td3);
         weatherTable.appendChild(TDrow);
 
         var td5 = document.createElement("td");
-        if (this.config.units == "imperial"){
-		td5.innerHTML = current.visibility_mi;	
-		} else {
-		 td5.innerHTML = current.visibility_km;	
-		}
+        td5.innerHTML = current.visibility_mi;
         TDrow.appendChild(td5);
         weatherTable.appendChild(TDrow);
 
@@ -360,8 +414,9 @@ Module.register("MMM-NOAA", {
         var sunset = srss.sunset;
         var utcsunrise = moment.utc(sunrise).toDate();
         var utcsunset = moment.utc(sunset).toDate();
-    var sunrise = this.config.ampm == true ? moment(utcsunrise).local().format("h:mm a") : moment(utcsunrise).local().format("H:mm");
-    var sunset = this.config.ampm == true ? moment(utcsunset).local().format("h:mm a") : moment(utcsunset).local().format("H:mm");
+        var sunrise = this.config.ampm == true ? moment(utcsunrise).local().format("h:mm A") : moment(utcsunrise).local().format("H:mm");
+        var sunset = this.config.ampm == true ? moment(utcsunset).local().format("h:mm A") : moment(utcsunset).local().format("H:mm");
+
 
         var Midrow = document.createElement("tr");
         Midrow.classList.add("xsmall", "bright");
@@ -417,6 +472,7 @@ Module.register("MMM-NOAA", {
         var nextRow = document.createElement("tr");
         nextRow.classList.add("xsmall", "bright");
 
+
         var aqius = this.air.aqius;
         var aqicol = document.createElement("td");
         aqicol.innerHTML = aqius;
@@ -429,19 +485,7 @@ Module.register("MMM-NOAA", {
         weatherTable.appendChild(nextRow);
 
         var wincol = document.createElement("td");
-        if(this.config.units == "en"){
-        	 if (current.wind_mph > 0){
-		wincol.innerHTML = current.wind_mph+" "+"<br><font size = 2>"+current.wind_dir;	 	
-			 } else {
-		wincol.innerHTML = current.wind_mph;		 	
-			 }
-		} else {
-			if (current.wind_kph > 0){
-		wincol.innerHTML = current.wind_kph+" "+"<br><font size = 2>"+current.wind_dir;	
-				} else {
-		wincol.innerHTML = current.wind_kph;			
-				}
-		}
+        wincol.innerHTML = current.wind_mph;
         nextRow.appendChild(wincol);
         weatherTable.appendChild(nextRow);
 
@@ -508,7 +552,11 @@ Module.register("MMM-NOAA", {
             var temper = document.createElement("td");
             temper.setAttribute("colspan", "1");
             temper.classList.add("xsmall", "bright");
-            temper.innerHTML = noaa.high.fahrenheit + "/" + noaa.low.fahrenheit;
+            if (this.config.units != "metric") {
+              temper.innerHTML = noaa.high.fahrenheit + "/" + noaa.low.fahrenheit;
+	    } else {
+              temper.innerHTML = noaa.high.celsius + "/" + noaa.low.celsius;
+	    }
             tempRow.appendChild(temper);
             ForecastTable.appendChild(tempRow);
 
@@ -518,65 +566,39 @@ Module.register("MMM-NOAA", {
 
         //////////////////END FORECAST ROWS///////////////////////
 
-        if (this.config.lang == "en"){
-        var alert = this.alert[0];
+	var alert = this.amess[0];
 
-        if (typeof alert !== 'undefined') {
-            var all = document.createElement("div");
-            all.classList.add("bright", "xsmall", "area");
-    
-            all.innerHTML = "<BR><font size=5>☣</font>  WEATHER ALERT  <font size=5>☣</font><br><br>";
-            wrapper.appendChild(all);
-
-            var Alert = document.createElement("div");
-            Alert.classList.add("bright", "xsmall");
-            Alert.innerHTML = alert.description + "<br>";
-            wrapper.appendChild(Alert);
-
-            var atext = document.createElement("div");
-            atext.classList.add("bright", "xsmall");
-            atext.innerHTML = "Expires: " + alert.expires;
-            wrapper.appendChild(atext);
-
-            var warn = document.createElement("div");
-            warn.classList.add("bright", "xsmall");
-            warn.innerHTML = alert.message.split(/\s+/).slice(0, 1).join(" ");
-            wrapper.appendChild(warn);
-        }
-		} else {
-		if (typeof alert !== 'undefined') {
-			var alert = this.amess[0];
+	if (c != 0){			
 			
-			var Alert = [];
-			var Level = [];
-		        var ATable = document.createElement("table");
-		        ATable.classList.add("table")
-		        ATable.setAttribute('style', 'line-height: 20%;');
-		        var aFCRow = document.createElement("tr");
-		        var ajumpy = document.createElement("th");
-		        ajumpy.setAttribute("colspan", 4);
-  		        ajumpy.setAttribute("style", "text-align:center");
-		        ajumpy.classList.add("rheading");
-		        ajumpy.innerHTML = this.translate("Weather Warning");
-		        aFCRow.appendChild(ajumpy);
-		        ATable.appendChild(aFCRow);
+		var Alert = [];
+		var Level = [];
+	        var ATable = document.createElement("table");
+	        ATable.classList.add("table")
+	        ATable.setAttribute('style', 'line-height: 20%;');
+	        var aFCRow = document.createElement("tr");
+	        var ajumpy = document.createElement("th");
+	        ajumpy.setAttribute("colspan", 4);
+	        ajumpy.setAttribute("style", "text-align:center");
+	        ajumpy.classList.add("rheading");
+	        ajumpy.innerHTML = this.translate("Weather Warning");
+	        aFCRow.appendChild(ajumpy);
+	        ATable.appendChild(aFCRow);
  
-			for(var i = 0; i < c; i++){
+		for(var i = 0; i < c; i++){
 
-				var alert = this.amess[i];
- 
-				Alert[i] = document.createElement("th");
-				Alert[i].classList.add("bright", "xsmall");
- 			        Alert[i].setAttribute("style", "line-height: 170%;");
-				Alert[i].innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=" + this.config.levelTrans[alert.level] +">" + alert.desc + "</marquee><br>";
-				ATable.appendChild(Alert[i]);
-			}
-     			wrapper.appendChild(ATable);
-				
-				}
-			}
+			var alert = this.amess[i];
+			Alert[i] = document.createElement("th");
+			Alert[i].classList.add("bright", "xsmall");
+		        Alert[i].setAttribute("style", "line-height: 170%;");
+			Alert[i].innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=" + this.config.levelTrans[alert.level] +">" + alert.desc + "</marquee><br>";
+			ATable.appendChild(Alert[i]);
+		}
+		wrapper.appendChild(ATable);
 
-        if (this.config.timeFormat == 12) {
+	}
+
+
+	if (this.config.timeFormat === 12) {
 	        var doutput = moment().format("MM/DD/YYYY");
         	var tinput = document.lastModified;
 	        var toutput = (moment(tinput.substring(10, 16), 'HH:mm').format('hh:mm a'));

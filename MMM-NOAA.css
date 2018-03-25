@@ -18,6 +18,11 @@
 	height: 70px;
 	align-content: center;
 }
+.MMM-NOAA .button {
+        border-style: inset;
+        border-width: 0px;
+	text-align: center;
+}
  .MMM-NOAA .Forecasttable {
      float: left;
      clear: left;
