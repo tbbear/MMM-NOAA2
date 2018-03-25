@@ -11,7 +11,7 @@ Module.register("MMM-NOAA", {
 
     // Module config defaults.
     defaults: {
-        updateInterval: 30 * 60 * 1000, // every 30 minutes
+        updateInterval: 10 * 60 * 1000, // every 10 minutes
         animationSpeed: 0,
         initialLoadDelay: 8000,
         maxWidth: "100%",
@@ -252,6 +252,7 @@ Module.register("MMM-NOAA", {
 			break;
 		}
 		this.url = "http://api.wunderground.com/api/" + this.config.apiKey + "/forecast/lang:" + lang + "/conditions/q/pws:" + this.config.pws + ".json";
+	        this.sendSocketNotification("CONFIG", this.config);
 		this.getNOAA();
 		this.updateDom(300);	
 	},
