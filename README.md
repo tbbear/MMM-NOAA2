@@ -41,7 +41,6 @@ Will automatically select translation file and either F or C by reading your def
 Will default to EN if NO translation file is found.  Weather alerts will be in the native language chosen by your config.js automatically and in the correct language!  Thanks tbbear!!! [Need to fix this for this branch]
 
     {
-        disabled: false,
         module: 'MMM-NOAA',
         position: 'top_right',
         config: {
