@@ -196,7 +196,9 @@ Module.register("MMM-NOAA", {
         } else if (notification === 'SHOW_NOAA') {
             this.show(1000);
             this.updateDom(300);
-        }
+        }  else if (notification === 'NEXT_NOAA') {
+            this.doakt();
+	}
     },
 
     getTime: function() {
