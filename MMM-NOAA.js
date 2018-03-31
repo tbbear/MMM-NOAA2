@@ -106,6 +106,7 @@ Module.register("MMM-NOAA", {
 	this.config.pws = this.config.pws1;
         this.url = this.getUrl();
         this.forecast = {};
+	this.forecast2 = {};
         this.air = {};
         this.srss = {};
         this.alert = [];
@@ -123,6 +124,7 @@ Module.register("MMM-NOAA", {
 	c = 0;
         this.current = data.current_observation;
         this.forecast = data.forecast.simpleforecast.forecastday;
+	this.forecast2 = data.forecast.txt_forecast.forecastday;
         this.city = this.current.display_location.city;
     },
 
@@ -305,6 +307,35 @@ Module.register("MMM-NOAA", {
 		}
 	}
         wrapper.appendChild(cur);
+
+	var xTable = document.createElement("table");
+	xTable.classList.add("table")
+	xTable.setAttribute('style', 'line-height: 20%;');
+	var xFCRow = document.createElement("tr");
+	var xjumpy = document.createElement("th");
+	xjumpy.setAttribute("colspan", 4);
+	xjumpy.setAttribute("style", "text-align:center");
+	xjumpy.classList.add("rheading");
+	xjumpy.innerHTML = this.translate("Preview");
+	xFCRow.appendChild(xjumpy);
+	xTable.appendChild(xFCRow);
+ 
+	var tt = document.createElement("th");
+ 	tt.classList.add("bright", "xsmall");
+	tt.setAttribute("style", "line-height: 170%;")
+        for (i = 0; i < this.forecast2.length; i++) {
+	        var ftext = this.forecast2[i];
+		if (i == 0){
+     		   	if (this.config.units != "metric") {
+				tt.innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=yellow>" + ftext.fctext + "</marquee><br>";
+			} else {
+ 				tt.innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=yellow>" + ftext.fcttext_metric + "</marquee><br>";
+	 		}
+		}
+	}
+	xTable.appendChild(tt);
+
+	wrapper.appendChild(xTable);
 
         var top = document.createElement("div");
 

@@ -41,13 +41,14 @@ Will automatically select translation file and either F or C by reading your def
 Will default to EN if NO translation file is found.  Weather alerts will be in the native language chosen by your config.js automatically and in the correct language!  Thanks tbbear!!! [Need to fix this for this branch]
 
     {
+        disabled: false,
         module: 'MMM-NOAA',
         position: 'top_right',
         config: {
 
 		apiKey: "YOUR API KEY",    // https://www.wunderground.com/weather/api  select the middle plan... 	 
 		airKey: "YOUR API KEY",    // IF you want Air Quality Index
-		pws1: "IBAYERNE30",         // go here to find your pws: https://www.wunderground.com/wundermap
+		pws1: "IBAYERNE30",	   // go here to find your pws: https://www.wunderground.com/wundermap
 		pws2: "KNYELMIR13",
 		pws3: "IHERAKLI5",  
 		loco1: "Erdweg/De",
@@ -56,6 +57,4 @@ Will default to EN if NO translation file is found.  Weather alerts will be in t
 	}
     },
 
-
-During the Beta please dont forget to rename after cloning from NOAA2 to NOAA!!!!!!! 
 ## Start your mirror . . . enjoy! 
