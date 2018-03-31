@@ -1,6 +1,6 @@
 # MMM-NOAA V2
 
-All the work i did is based on this fantastic modules MMM-NOAA from cowboydude!!!
+All the work i did is based on this fantastic modules MMM-NOAA from cowboysdude!!!
 
 **Weather for your mirror**
   Also UV index and Air Quality Index.  [Warning AQI may not work in all areas if not you won't be able to use this branch].
