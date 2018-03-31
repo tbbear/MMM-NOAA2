@@ -17,13 +17,13 @@ Module.register("MMM-NOAA", {
         maxWidth: "100%",
         apiKey: "",
         airKey: "",
-	loco1: "Erdweg",
-	loco2: "New York",
-	loco3: "brrrrrrr",
+	loco1: "xxx",
+	loco2: "xxx",
+	loco3: "xxx",
 	pws: "XXX",
-	pws1: "KNYELMIR13",
-	pws2: "KNYELMIR13",
-	pws3: "KNYELMIR13",
+	pws1: "xxx",
+	pws2: "xxx",
+	pws3: "xxx",
 
         langFile: {
             "en": "en-US",
@@ -266,13 +266,14 @@ Module.register("MMM-NOAA", {
 
         var wrapper = document.createElement("div");
 
-	var loc = document.createElement("div");
-	loc.innerHTML = loco;
-	loc.style.cursor = "pointer";
-	loc.className = "button";
-	loc.addEventListener("click", () => this.doact());
-	wrapper.appendChild(loc);
-
+	if (this.config.pws2 != "xxx"){
+		var loc = document.createElement("div");
+		loc.innerHTML = loco;
+		loc.style.cursor = "pointer";
+		loc.className = "button";
+		loc.addEventListener("click", () => this.doact());
+		wrapper.appendChild(loc);
+	}
 
         var current = this.current;
 
@@ -293,11 +294,11 @@ Module.register("MMM-NOAA", {
         cur.classList.add("large", "bright");
         cur.setAttribute('style', 'line-height: 5%;');
         cur.setAttribute("style", "padding-bottom:15px;");
-	if (this.config.units != "metric") {
+	if (config.timeFormat != 24) {
 		if (current.temp_f > 80) {
 			cur.innerHTML = "<font color=#7dfafd>" + Math.round(current.temp_f) + "&deg;";
 		} else {
-			ccur.innerHTML = Math.round(current.temp_f) + "&deg;";
+			cur.innerHTML = Math.round(current.temp_f) + "&deg;";
 		}
 	} else {
 		if (current.temp_c > 26) {
@@ -316,7 +317,7 @@ Module.register("MMM-NOAA", {
 	xjumpy.setAttribute("colspan", 4);
 	xjumpy.setAttribute("style", "text-align:center");
 	xjumpy.classList.add("rheading");
-	xjumpy.innerHTML = this.translate("Preview");
+	xjumpy.innerHTML = this.translate("Forecast");
 	xFCRow.appendChild(xjumpy);
 	xTable.appendChild(xFCRow);
  
@@ -326,8 +327,8 @@ Module.register("MMM-NOAA", {
         for (i = 0; i < this.forecast2.length; i++) {
 	        var ftext = this.forecast2[i];
 		if (i == 0){
-     		   	if (this.config.units != "metric") {
-				tt.innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=yellow>" + ftext.fctext + "</marquee><br>";
+     		   	if (config.timeFormat != 24) {
+				tt.innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=yellow>" + ftext.fcttext + "</marquee><br>";
 			} else {
  				tt.innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=yellow>" + ftext.fcttext_metric + "</marquee><br>";
 	 		}
@@ -387,7 +388,7 @@ Module.register("MMM-NOAA", {
         weatherTable.appendChild(TDrow);
 
         var td3 = document.createElement("td");
-	if (this.config.units != "metric") {
+	if (config.timeFormat != 24) {
 	        if (current.pressure_trend != 0) {
         	    td3.innerHTML = current.pressure_in + " " + current.pressure_trend;
 	        } else {
@@ -586,7 +587,7 @@ Module.register("MMM-NOAA", {
             var temper = document.createElement("td");
             temper.setAttribute("colspan", "1");
             temper.classList.add("xsmall", "bright");
-            if (this.config.units != "metric") {
+            if (config.timeFormat != 24) {
               temper.innerHTML = noaa.high.fahrenheit + "/" + noaa.low.fahrenheit;
 	    } else {
               temper.innerHTML = noaa.high.celsius + "/" + noaa.low.celsius;
@@ -632,7 +633,7 @@ Module.register("MMM-NOAA", {
 	}
 
 
-	if (this.config.timeFormat === 12) {
+	if (config.timeFormat == 12) {
 	        var doutput = moment().format("MM/DD/YYYY");
         	var tinput = document.lastModified;
 	        var toutput = (moment(tinput.substring(10, 16), 'HH:mm').format('hh:mm a'));
