@@ -81,12 +81,13 @@ module.exports = NodeHelper.create({
 								translate(alerts.description, {from: 'en', to: this.config.lang})
 							]).then(function(results) {
 								var desc = results[0].text;
+								var level = 2;
 								var level = alerts.level_meteoalarm;
  					    	        	self.sendSocketNotification("ALERT_RESULTS", {desc, level});
 		              				})
                 	   			}else{
 		                  			var desc = alerts.description;
-                		  			var level = alerts.level_meteoalarm;
+                		  			var level = 2;
 							self.sendSocketNotification("ALERT_RESULTS", {desc, level});
 						}
 
