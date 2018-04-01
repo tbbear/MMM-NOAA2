@@ -619,14 +619,14 @@ Module.register("MMM-NOAA", {
 	        aFCRow.appendChild(ajumpy);
 	        ATable.appendChild(aFCRow);
  
-		for(var i = 0; i < c; i++){
+ 		for(var h = 0; h < c; h++){
 
-			var alert = this.amess[i];
-			Alert[i] = document.createElement("th");
-			Alert[i].classList.add("bright", "xsmall");
-		        Alert[i].setAttribute("style", "line-height: 170%;");
-			Alert[i].innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=" + this.config.levelTrans[alert.level] +">" + alert.desc + "</marquee><br>";
-			ATable.appendChild(Alert[i]);
+			var alert = this.amess[h];
+			Alert[h] = document.createElement("tr");
+			Alert[h].classList.add("bright", "xsmall");
+		        Alert[h].setAttribute("style", "line-height: 170%;");
+			Alert[h].innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=" + this.config.levelTrans[alert.level] +">" + alert.desc + "</marquee>";
+			ATable.appendChild(Alert[h]);
 		}
 		wrapper.appendChild(ATable);
 
