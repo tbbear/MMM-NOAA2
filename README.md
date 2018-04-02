@@ -1,23 +1,21 @@
-# MMM-NOAA V2
+This repository is maintained by Cowboysdude and tbbear [SPECIAL THANKS FOR FOR ALL THE HARD WORK!]
+[This is the second version of this module for MagicMirror2]
 
-All the work i did is based on this fantastic modules MMM-NOAA from cowboysdude!!!
+# MMM-NOAA V2.0
 
 **Weather for your mirror**
-  Also UV index and Air Quality Index.  [Warning AQI may not work in all areas if not you won't be able to use this branch].
+  Also UV index and Air Quality Index.  [Warning AQI may not work in all areas].
 
 ## Examples
 
-![](capture.png)  ![](de.png)
+![](NOAA.PNG) 
 
- 
-   *Config options trimmed to just three!
-   *NO longer need to enter Lat and Lon... it's automatic!
-   *Automatically adjusts languge based on your config.js!
+*Automatically adjusts languge and all other settings based on your config.js!
 
 ## Your terminal installation instructions
 
-* `git clone https://github.com/cowboysdude/MMM-NOAA2` into the `~/MagicMirror/modules` directory.
-*  `~MagicMirror/modules/MMM-NOAA2`
+* `git clone https://github.com/cowboysdude/MMM-NOAA` into the `~/MagicMirror/modules` directory.
+*  `~MagicMirror/modules/MMM-NOAA`
 *  `npm install`
 
 ## Get your free API key here [WEATHER, You must also get an AirAPI Key--- see below]
@@ -40,23 +38,37 @@ All the work i did is based on this fantastic modules MMM-NOAA from cowboysdude!
 ## Config.js entry and options
 
 Will automatically select translation file and either F or C by reading your defaults from the config.js file [at the top]
-Will default to EN if NO translation file is found.  Weather alerts will be in the native language chosen by your config.js automatically and in the correct language!  Thanks tbbear!!! [Need to fix this for this branch]
+Will default to EN if NO translation file is found.  Weather alerts will be in the native language chosen by your config.js automatically and in the correct language!  Thanks tbbear!!!
+In this new Version you can select up to 3 different weather locations like in this example. You can also show up names(the one u like) for this places.
+U can do the selection of the location my pressing on the city name on touchscreen, with mouse-click or mousepad. 
 
     {
-        disabled: false,
         module: 'MMM-NOAA',
-        position: 'top_right',
         config: {
 
-		apiKey: "YOUR API KEY",    // https://www.wunderground.com/weather/api  select the middle plan... 	 
+		apiKey: "YOUR API KEY",    // https://www.wunderground.com/weather/api  select the middle plan... 
 		airKey: "YOUR API KEY",    // IF you want Air Quality Index
-		pws1: "IBAYERNE30",	   // go here to find your pws: https://www.wunderground.com/wundermap
-		pws2: "KNYELMIR13",
+		pws1: "KNYELMIR13",	   // go here to find your pws: https://www.wunderground.com/wundermap
+		pws2: "IBIBIONE8", 
 		pws3: "IHERAKLI5",  
-		loco1: "Erdweg/De",
-		loco2: "New York/Us",
-		loco3: "Kos/Gr"
+		loco1: "New York/Us",	   // fill in the name of the location or whatever u want to be displayed
+		loco2: "Bibione/It",
+		loco3: "Kos/Gr",
 	}
     },
+
+If u dont want or need this so like before with only one pws  (location) use this example:
+
+    {
+        module: 'MMM-NOAA',
+        config: {
+
+		apiKey: "YOUR API KEY",    // https://www.wunderground.com/weather/api  select the middle plan... 
+		airKey: "YOUR API KEY",    // IF you want Air Quality Index
+		pws1: "KNYELMIR13",	   // go here to find your pws: https://www.wunderground.com/wundermap
+	}
+    },
+
+## Very important for updating: !!! Please rename ur pws to pws1 !!!
 
 ## Start your mirror . . . enjoy! 
