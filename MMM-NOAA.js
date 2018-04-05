@@ -1,6 +1,6 @@
 /* Magic Mirror
  * Module: MMM-NOAA
- * By cowboysdude and snille 
+ * By cowboysdude and tbbear 
         modified by barnosch
  */
 var c = 0;
@@ -15,6 +15,7 @@ Module.register("MMM-NOAA", {
         animationSpeed: 0,
         initialLoadDelay: 8000,
         maxWidth: "100%",
+	head: "true",
         apiKey: "",
         airKey: "",
 	loco1: "xxx",
@@ -196,7 +197,7 @@ Module.register("MMM-NOAA", {
             this.hide(100);
             this.updateDom(300);
         } else if (notification === 'SHOW_NOAA') {
-            this.show(1000);
+            this.show(100);
             this.updateDom(300);
         }  else if (notification === 'NEXT_NOAA') {
             this.doakt();
@@ -223,17 +224,6 @@ Module.register("MMM-NOAA", {
             });
         }
         return time;
-    },
-
-    secondsToString: function(seconds) {
-        var srss = this.srss.day_length;
-        var numhours = Math.floor((srss % 86400) / 3600);
-        var numminutes = Math.floor(((srss % 86400) % 3600) / 60);
-        if (numminutes > 0) {
-            return numhours + ":" + numminutes;
-        } else {
-            return numhours + this.translate(" hours ");
-        }
     },
 
     doact: function() {
@@ -294,7 +284,7 @@ Module.register("MMM-NOAA", {
         cur.classList.add("large", "bright");
         cur.setAttribute('style', 'line-height: 5%;');
         cur.setAttribute("style", "padding-bottom:15px;");
-	if (config.timeFormat != 24) {
+	if (config.units != "metric") {
 		if (current.temp_f > 80) {
 			cur.innerHTML = "<font color=#7dfafd>" + Math.round(current.temp_f) + "&deg;";
 		} else {
@@ -309,39 +299,39 @@ Module.register("MMM-NOAA", {
 	}
         wrapper.appendChild(cur);
 
-	var xTable = document.createElement("table");
-	xTable.classList.add("table")
-	xTable.setAttribute('style', 'line-height: 20%;');
-	var xFCRow = document.createElement("tr");
+        var top = document.createElement("div");
+
+        var weatherTable = document.createElement("table");
+        weatherTable.classList.add("table");
+        
+        var xFCRow = document.createElement("tr");
 	var xjumpy = document.createElement("th");
 	xjumpy.setAttribute("colspan", 4);
 	xjumpy.setAttribute("style", "text-align:center");
 	xjumpy.classList.add("rheading");
 	xjumpy.innerHTML = this.translate("Forecast");
 	xFCRow.appendChild(xjumpy);
-	xTable.appendChild(xFCRow);
- 
-	var tt = document.createElement("th");
- 	tt.classList.add("bright", "xsmall");
-	tt.setAttribute("style", "line-height: 170%;")
-        for (i = 0; i < this.forecast2.length; i++) {
-	        var ftext = this.forecast2[i];
-		if (i == 0){
-     		   	if (config.timeFormat != 24) {
-				tt.innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=yellow>" + ftext.fcttext + "</marquee><br>";
+	if (this.config.head == "true") { 
+	   weatherTable.appendChild(xFCRow);}
+        
+	var fRow = document.createElement("tr");
+	var tt = document.createElement("td");
+	tt.classList.add("bright", "xsmall");
+	tt.setAttribute("colspan", 4);
+	tt.setAttribute("style", "line-height: 170%;");
+	tt.setAttribute("style","padding-top: 8px");
+	for (i = 0; i < this.forecast2.length; i++) {
+		var ftext = this.forecast2[i];
+		if (i == 0) {
+			if (config.units != "metric") {
+				tt.innerHTML = "<marquee scrollamount=" + "10" + " scrolldelay=" + "300" + "><font color=#e3f3f9>" + ftext.fcttext + "</marquee><br>";
 			} else {
- 				tt.innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=yellow>" + ftext.fcttext_metric + "</marquee><br>";
-	 		}
+				tt.innerHTML = "<marquee scrollamount=" + "10" + " scrolldelay=" + "300" + "><font color=#e3f3f9>" + ftext.fcttext_metric + "</marquee><br>";
+			}
 		}
 	}
-	xTable.appendChild(tt);
-
-	wrapper.appendChild(xTable);
-
-        var top = document.createElement("div");
-
-        var weatherTable = document.createElement("table");
-        weatherTable.classList.add("table");
+        fRow.appendChild(tt);
+        weatherTable.appendChild(fRow);
  
         var hRow = document.createElement("tr");
         var hsecond = document.createElement("th");
@@ -350,16 +340,15 @@ Module.register("MMM-NOAA", {
         hsecond.classList.add("rheading");
         hsecond.innerHTML = this.translate("Atmospheric Conditions");
         hRow.appendChild(hsecond);
-        weatherTable.appendChild(hRow);
+	if (this.config.head == "true") { 
+        	weatherTable.appendChild(hRow);}
 
         var forecastRow = document.createElement("tr");
-
         var second = document.createElement("th");
         var tempSymbol = document.createElement("i");
         tempSymbol.classList.add("wi", "wi-humidity", "font", "fontac");
         second.appendChild(tempSymbol);
         forecastRow.appendChild(second);
-
 
         var third = document.createElement("th");
         var currentHSymbol = document.createElement("i");
@@ -375,20 +364,17 @@ Module.register("MMM-NOAA", {
 
         weatherTable.appendChild(forecastRow);
 
-
         console.log(current);
 
         var TDrow = document.createElement("tr");
         TDrow.classList.add("xsmall", "bright");
-        TDrow.setAttribute('style', 'line-height: 30%;');
-
         var td2 = document.createElement("td");
         td2.innerHTML = current.relative_humidity;
         TDrow.appendChild(td2);
         weatherTable.appendChild(TDrow);
 
         var td3 = document.createElement("td");
-	if (config.timeFormat != 24) {
+	if (config.units != "metric") {
 	        if (current.pressure_trend != 0) {
         	    td3.innerHTML = current.pressure_in + " " + current.pressure_trend;
 	        } else {
@@ -409,7 +395,6 @@ Module.register("MMM-NOAA", {
         TDrow.appendChild(td5);
         weatherTable.appendChild(TDrow);
 
-
         top.appendChild(weatherTable);
         wrapper.appendChild(top);
 
@@ -419,11 +404,10 @@ Module.register("MMM-NOAA", {
         jumpy.classList.add("rheading");
         jumpy.innerHTML = this.translate("Sunrise/Sunset");
         SSRow.appendChild(jumpy);
-        weatherTable.appendChild(SSRow);
+	if (this.config.head == "true") { 
+	        weatherTable.appendChild(SSRow);}
 
         var midRow = document.createElement("tr");
-
-
         var sunup = document.createElement("th");
         var SUSymbol = document.createElement("i");
         SUSymbol.classList.add("wi", "wi-sunrise", "font", "fontss");
@@ -480,7 +464,8 @@ Module.register("MMM-NOAA", {
         ccolumn.classList.add("rheading");
         ccolumn.innerHTML = this.translate("AQI/UV/Wind");
         CRow.appendChild(ccolumn);
-        weatherTable.appendChild(CRow);
+	if (this.config.head == "true") { 
+	        weatherTable.appendChild(CRow);}
 
         var otherRow = document.createElement("tr");
 
@@ -490,9 +475,18 @@ Module.register("MMM-NOAA", {
         airq.appendChild(aqSymbol);
         otherRow.appendChild(airq);
 
+        var g = new Date();
+        var s = g.getHours();
+        str2 = sunset.slice(0, 2);
+	str3 = sunrise.slice(0, 2);
+        
         var uvcol = document.createElement("th");
         var uvSymbol = document.createElement("i");
-        uvSymbol.classList.add("wi", "wi-day-sunny", "font", "fontauw");
+        if (s >= str2 || s <= str3){
+		uvSymbol.innerHTML='<img src="modules/MMM-NOAA/images/smallmoon.png" width=25 height=25>';	
+	} else {
+      		uvSymbol.classList.add("wi", "wi-day-sunny", "font", "fontauw");	
+	}
         uvcol.appendChild(uvSymbol);
         otherRow.appendChild(uvcol);
 
@@ -507,7 +501,6 @@ Module.register("MMM-NOAA", {
         var nextRow = document.createElement("tr");
         nextRow.classList.add("xsmall", "bright");
 
-
         var aqius = this.air.aqius;
         var aqicol = document.createElement("td");
         aqicol.innerHTML = aqius;
@@ -515,7 +508,11 @@ Module.register("MMM-NOAA", {
         weatherTable.appendChild(nextRow);
 
         var uvcol = document.createElement("td");
-        uvcol.innerHTML = current.UV;
+        if (s >= str2 || s <= str3){
+	        uvcol.innerHTML = this.translate("Night");	
+	} else {
+		uvcol.innerHTML = current.UV;		
+	}
         nextRow.appendChild(uvcol);
         weatherTable.appendChild(nextRow);
 
@@ -540,7 +537,8 @@ Module.register("MMM-NOAA", {
         jumpy.classList.add("rheading");
         jumpy.innerHTML = this.translate("4 Day Forecast");
         FCRow.appendChild(jumpy);
-        ForecastTable.appendChild(FCRow);
+	if (this.config.head == "true") { 
+	        ForecastTable.appendChild(FCRow);}
 
         var d = new Date();
         var weekday = new Array(7);
@@ -574,7 +572,6 @@ Module.register("MMM-NOAA", {
         for (i = 0; i < this.forecast.length; i++) {
             var noaa = this.forecast[i];
             var fore = document.createElement("td");
-
             fore.setAttribute("colspan", "1");
             fore.innerHTML = "<img src='modules/MMM-NOAA/images/" + noaa.icon + ".png' height='22' width='28'>";
             foreRow.appendChild(fore);
@@ -587,7 +584,7 @@ Module.register("MMM-NOAA", {
             var temper = document.createElement("td");
             temper.setAttribute("colspan", "1");
             temper.classList.add("xsmall", "bright");
-            if (config.timeFormat != 24) {
+            if (config.units != "metric") {
               temper.innerHTML = noaa.high.fahrenheit + "/" + noaa.low.fahrenheit;
 	    } else {
               temper.innerHTML = noaa.high.celsius + "/" + noaa.low.celsius;
@@ -602,7 +599,7 @@ Module.register("MMM-NOAA", {
         //////////////////END FORECAST ROWS///////////////////////
 
 	var alert = this.amess[0];
-
+  
 	if (c != 0){			
 			
 		var Alert = [];
@@ -617,21 +614,22 @@ Module.register("MMM-NOAA", {
 	        ajumpy.classList.add("rheading");
 	        ajumpy.innerHTML = this.translate("Weather Warning");
 	        aFCRow.appendChild(ajumpy);
-	        ATable.appendChild(aFCRow);
+		if (this.config.head == "true") { 
+		        ATable.appendChild(aFCRow);}
  
- 		for(var h = 0; h < c; h++){
-
-			var alert = this.amess[h];
-			Alert[h] = document.createElement("tr");
-			Alert[h].classList.add("bright", "xsmall");
-		        Alert[h].setAttribute("style", "line-height: 170%;");
-			Alert[h].innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=" + this.config.levelTrans[alert.level] +">" + alert.desc + "</marquee>";
-			ATable.appendChild(Alert[h]);
+		for(var i = 0; i < c; i++){
+			console.log(alert.desc);
+			if (alert.desc != 'undefined'|| undefined){
+				var alert = this.amess[i];
+				Alert[i] = document.createElement("tr");
+				Alert[i].classList.add("bright", "xsmall");
+			        Alert[i].setAttribute("style", "line-height: 170%;");
+				Alert[i].innerHTML = "<marquee scrollamount="+"20"+" scrolldelay="+"300"+"><font color=" + this.config.levelTrans[alert.level] +">" + alert.desc + "</marquee><br>";
+				ATable.appendChild(Alert[i]);
+			}
+			wrapper.appendChild(ATable);
 		}
-		wrapper.appendChild(ATable);
-
 	}
-
 
 	if (config.timeFormat == 12) {
 	        var doutput = moment().format("MM/DD/YYYY");
